@@ -21,3 +21,5 @@
 .summary-list>div{display:flex;justify-content:space-between;gap:14px;padding:12px 14px;background:#f8fafd;border:1px solid #e2e8f0;border-radius:10px;font-size:13px}
 .summary-list b{color:#17213d}
 .summary-list span{color:#667085;text-align:right}
+
+.header-actions{display:flex;align-items:center;gap:4px}.user-chip{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#667085;font-size:12px;font-weight:700;padding:7px 9px;background:#f4f6fa;border-radius:8px}@media(max-width:700px){.header-actions .user-chip{display:none}.header-actions{gap:0}}

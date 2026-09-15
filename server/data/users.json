@@ -1,0 +1,16 @@
+[
+  {
+    "id": "267b5cd8-4e36-4cc4-9d64-93e1d3428975",
+    "name": "Iniya",
+    "email": "iniya737@gmail.com",
+    "passwordHash": "$2a$10$LxNJW5Cafo6pI/kBaOK8FOtU35E3/8WJa3bJdfVhRiwR7LsVaEdIm",
+    "createdAt": "2026-09-15T10:32:57.043Z"
+  },
+  {
+    "id": "29e14c06-3eca-44fa-9bd6-96305494dbde",
+    "name": "testuser",
+    "email": "testuser@gmail.com",
+    "passwordHash": "$2a$10$MX6K.MrDsUAstMagSRgI5ujxHB1RCzoayxCFhg0we0xSEZjrL/b/O",
+    "createdAt": "2026-09-15T10:35:52.860Z"
+  }
+]

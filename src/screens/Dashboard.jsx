@@ -4,10 +4,10 @@ import DatasetCard from '../components/DatasetCard.jsx';
 // The separate "dashboard overview" — lists every dataset.
 // Notice how short this is now: it doesn't know HOW a dataset card
 // looks anymore, it just loops and renders <DatasetCard />.
-function Dashboard({ datasets, onCreate, onOpen, onRename, onDelete }) {
+function Dashboard({ datasets, user, onLogout, onCreate, onOpen, onRename, onDelete }) {
   return (
     <>
-      <Header title="Datasets" action={<button className="text-button" onClick={onCreate}>+ New</button>} />
+      <Header title="Datasets" action={<div className="header-actions"><span className="user-chip">{user?.name || user?.email}</span><button className="text-button" onClick={onLogout}>Logout</button><button className="text-button" onClick={onCreate}>+ New</button></div>} />
       <section className="page home-page">
         <div className="hero">
           <div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import AuthPage from './auth/AuthPage.jsx';
 import Dashboard from './screens/Dashboard.jsx';
 import CreateDataset from './screens/CreateDataset/CreateDataset.jsx';
 import Overview from './screens/Overview.jsx';
@@ -6,6 +7,9 @@ import SampleDetail from './screens/SampleDetail.jsx';
 import { STORE, load } from './utils/helpers.js';
 
 function App() {
+  const [user, setUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('metal-tinder-user')) || null; } catch { return null; }
+  });
   const [datasets, setDatasets] = useState(load);
   const [screen, setScreen] = useState({ name: 'dashboard' });
   const [notice, setNotice] = useState('');
@@ -33,11 +37,15 @@ function App() {
     }
   };
 
+  if (!user) return <AuthPage onAuthenticated={setUser} />;
+
   return (
     <main className="app-shell">
       {screen.name === 'dashboard' && (
         <Dashboard
           datasets={datasets}
+          user={user}
+          onLogout={() => { localStorage.removeItem('metal-tinder-user'); setUser(null); }}
           onCreate={() => setScreen({ name: 'create' })}
           onOpen={id => setScreen({ name: 'overview', datasetId: id })}
           onRename={(id, name) =>
