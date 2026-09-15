@@ -1,38 +1,94 @@
-import { useEffect, useState } from 'react'
-import CreateDataset from './components/CreateDataset.jsx'
-import DatasetOverview from './components/DatasetOverview.jsx'
-import Home from './components/Home.jsx'
-import SampleDetail from './components/SampleDetail.jsx'
-import { loadDatasets, STORE } from './utils/dataset.js'
+import { useEffect, useState } from 'react';
+import AuthPage from './auth/AuthPage.jsx';
+import Dashboard from './screens/Dashboard.jsx';
+import CreateDataset from './screens/CreateDataset/CreateDataset.jsx';
+import Overview from './screens/Overview.jsx';
+import SampleDetail from './screens/SampleDetail.jsx';
+import { STORE, load } from './utils/helpers.js';
 
 function App() {
-  const [datasets, setDatasets] = useState(loadDatasets)
-  const [screen, setScreen] = useState({ name: 'home' })
-  const [notice, setNotice] = useState('')
-  const dataset = datasets.find(item => item.id === screen.datasetId)
+  const [user, setUser] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('metal-tinder-user')) || null; } catch { return null; }
+  });
+  const [datasets, setDatasets] = useState(load);
+  const [screen, setScreen] = useState({ name: 'dashboard' });
+  const [notice, setNotice] = useState('');
 
-  useEffect(() => localStorage.setItem(STORE, JSON.stringify(datasets)), [datasets])
   useEffect(() => {
-    if (!notice) return undefined
-    const timeout = setTimeout(() => setNotice(''), 2600)
-    return () => clearTimeout(timeout)
-  }, [notice])
+    localStorage.setItem(STORE, JSON.stringify(datasets));
+  }, [datasets]);
 
-  const updateDataset = next => setDatasets(all => all.map(item => item.id === next.id ? next : item))
+  useEffect(() => {
+    if (!notice) return;
+    const id = setTimeout(() => setNotice(''), 2600);
+    return () => clearTimeout(id);
+  }, [notice]);
+
+  const dataset = datasets.find(d => d.id === screen.datasetId);
+
+  const updateDataset = next =>
+    setDatasets(all => all.map(d => (d.id === next.id ? next : d)));
+
   const deleteDataset = id => {
-    if (!confirm('Delete this dataset and all its samples?')) return
-    setDatasets(all => all.filter(item => item.id !== id))
-    setScreen({ name: 'home' })
-    setNotice('Dataset deleted')
-  }
+    if (confirm('Delete this dataset and all its samples?')) {
+      setDatasets(all => all.filter(d => d.id !== id));
+      setScreen({ name: 'dashboard' });
+      setNotice('Dataset deleted');
+    }
+  };
 
-  return <main className="app-shell">
-    {screen.name === 'home' && <Home datasets={datasets} onCreate={() => setScreen({ name: 'create' })} onOpen={datasetId => setScreen({ name: 'overview', datasetId })} onRename={(id, name) => setDatasets(all => all.map(item => item.id === id ? { ...item, name } : item))} onDelete={deleteDataset} />}
-    {screen.name === 'create' && <CreateDataset onBack={() => setScreen({ name: 'home' })} onCreate={created => { setDatasets(all => [...all, created]); setScreen({ name: 'overview', datasetId: created.id }) }} />}
-    {screen.name === 'overview' && dataset && <DatasetOverview dataset={dataset} onBack={() => setScreen({ name: 'home' })} onUpdate={updateDataset} onDelete={() => deleteDataset(dataset.id)} onOpenSample={sampleId => setScreen({ name: 'sample', datasetId: dataset.id, sampleId })} />}
-    {screen.name === 'sample' && dataset && <SampleDetail dataset={dataset} sampleId={screen.sampleId} onBack={() => setScreen({ name: 'overview', datasetId: dataset.id })} onUpdate={updateDataset} />}
-    {notice && <div className="toast">{notice}</div>}
-  </main>
+  if (!user) return <AuthPage onAuthenticated={setUser} />;
+
+  return (
+    <main className="app-shell">
+      {screen.name === 'dashboard' && (
+        <Dashboard
+          datasets={datasets}
+          user={user}
+          onLogout={() => { localStorage.removeItem('metal-tinder-user'); setUser(null); }}
+          onCreate={() => setScreen({ name: 'create' })}
+          onOpen={id => setScreen({ name: 'overview', datasetId: id })}
+          onRename={(id, name) =>
+            setDatasets(all => all.map(d => (d.id === id ? { ...d, name } : d)))
+          }
+          onDelete={deleteDataset}
+        />
+      )}
+
+      {screen.name === 'create' && (
+        <CreateDataset
+          onBack={() => setScreen({ name: 'dashboard' })}
+          onCreate={created => {
+            setDatasets(all => [...all, created]);
+            setScreen({ name: 'overview', datasetId: created.id });
+          }}
+        />
+      )}
+
+      {screen.name === 'overview' && dataset && (
+        <Overview
+          dataset={dataset}
+          onBack={() => setScreen({ name: 'dashboard' })}
+          onUpdate={updateDataset}
+          onDelete={() => deleteDataset(dataset.id)}
+          onOpenSample={sampleId =>
+            setScreen({ name: 'sample', datasetId: dataset.id, sampleId })
+          }
+        />
+      )}
+
+      {screen.name === 'sample' && dataset && (
+        <SampleDetail
+          dataset={dataset}
+          sampleId={screen.sampleId}
+          onBack={() => setScreen({ name: 'overview', datasetId: dataset.id })}
+          onUpdate={updateDataset}
+        />
+      )}
+
+      {notice && <div className="toast">{notice}</div>}
+    </main>
+  );
 }
 
-export default App
+export default App;
