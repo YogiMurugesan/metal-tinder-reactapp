@@ -1,0 +1,14 @@
+[
+  {
+    "id": "c9d5ad13-a564-4989-9269-2f6415fb7103",
+    "name": "Test User",
+    "email": "testuser@example.com",
+    "password": "$2a$10$S0IztxPfwqVb04j.ede3redW9NmLoml7lCh7a0Pt21EKFwK7XnwhG"
+  },
+  {
+    "id": "0bfa556f-cb07-449d-91c9-8f6ffaef9e6e",
+    "name": "yolo",
+    "email": "yolo@gmail.com",
+    "password": "$2a$10$wPmzm2W..vtrBKdA3.muXubbWdrt23ib8HmwB.1.GBgHgQ/koCzM."
+  }
+]
